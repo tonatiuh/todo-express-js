@@ -1,0 +1,9 @@
+{
+  "development": {
+    "username": "tonatiuhnunez",
+    "password": null,
+    "database": "todo_express",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
