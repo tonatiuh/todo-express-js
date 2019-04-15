@@ -5,12 +5,10 @@ block content
   .menu
     h2 Menu
     ul.nav.nav-pills
-      li
-        a(href='/') Home
       li.active
-        a(href='/tasks') Todo List
+        a(href='/tasks') All tasks
       li
-        a(href="/tasks/completed") Completed
+        a(href="/tasks?completed=true") Completed
   h1= title
 
   .list
@@ -26,23 +24,27 @@ block content
           input(type='text', name='name', placeholder='Add a new task')
         div.delete
           input.btn.btn-primary.btn-sm(type="submit", value='add')
+
     if (tasks.length === 0)
       | No tasks.
     each task, index in tasks
       .item
         div.action
-          form(action='/tasks/#{task._id}', method='post')
+          form(action='/tasks/toggle', method='post')
             input(type='hidden', value=task.id.toString(), name='id')
-            input(type='hidden', value='true', name='completed')
             input(type='hidden', value=locals._csrf, name='_csrf')
-            input(type='submit', class='btn btn-success btn-xs task-done', value='done')
+            input(type='submit', class='btn btn-success btn-xs task-done', value='Toggle')
         div.num
           span=index+1
             |.&nbsp;
         div.name
-          span.name=task.name + ' (Created at: ' + moment(task.createTime).format("YYYY/MM/DD") + ')'
-          //- no support for DELETE method in forms
-          //- http://amundsen.com/examples/put-delete-forms/
-          //- so do XHR request instead from public/javascripts/main.js
+          span.name
+            - if (task.completed)
+              strike= task.name + ' (Added on: ' + moment(task.createTime).format("YYYY/MM/DD") + ')'
+              span &nbsp; √
+            - else
+              = task.name + ' (Added on: ' + moment(task.createTime).format("YYYY/MM/DD") + ')'
         div.delete
-          a(class='btn btn-danger btn-xs task-delete', data-task-id=task.id.toString(), data-csrf=locals._csrf) delete
+          form(action='/tasks/delete', method='post')
+            input(type='hidden', value=task.id.toString(), name='id')
+            input(type='submit', class='btn btn-success btn-xs task-done', value='Delete')
